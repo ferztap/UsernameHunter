@@ -5,10 +5,22 @@
 [![Contributors](https://img.shields.io/github/contributors/FerzDevZ/UsernameHunter)](https://github.com/FerzDevZ/UsernameHunter/graphs/contributors)
 [![Issues](https://img.shields.io/github/issues/FerzDevZ/UsernameHunter)](https://github.com/FerzDevZ/UsernameHunter/issues)
 [![Stars](https://img.shields.io/github/stars/FerzDevZ/UsernameHunter?style=social)](https://github.com/FerzDevZ/UsernameHunter)
+[![PyPI version](https://img.shields.io/pypi/v/usernamehunter?color=blue)](https://pypi.org/project/usernamehunter/) <!-- Remove if not on PyPI -->
+[![Build Status](https://img.shields.io/github/actions/workflow/status/FerzDevZ/UsernameHunter/python-app.yml?branch=main)](https://github.com/FerzDevZ/UsernameHunter/actions) <!-- Remove if not using CI -->
 
 > **UsernameHunter** — Advanced & Modern Username Checker for 200+ Social Media & Viral Sites (Global & Indonesia) 🚀
 
-Cek ketersediaan username di ratusan platform sosial media global, Indonesia, dan situs viral secara paralel, cepat, dan modern. Mendukung fitur pencarian multi-username, plugin, proxy, filter hasil, progress bar, output warna, statistik, chart, logging, wizard interaktif, dan ekspor hasil ke berbagai format.
+---
+
+## 📝 Deskripsi
+
+UsernameHunter adalah tools open-source untuk melakukan pengecekan ketersediaan username di ratusan platform sosial media, marketplace, dan situs viral secara paralel, cepat, dan modern. Mendukung pencarian multi-username, plugin, proxy, filter hasil, progress bar, output warna, statistik, chart, logging, wizard interaktif, dan ekspor hasil ke berbagai format.
+
+- **Multi-platform:** Cek username di ratusan situs (global, Indonesia, viral, niche)
+- **Paralel & Efisien:** ThreadPoolExecutor, progress bar multi-level
+- **Ekstensi Mudah:** Plugin, custom JSON, modularisasi penuh
+- **Visual & Logging:** Output warna, chart, logging detail, riwayat, statistik
+- **Automation Ready:** CLI, config YAML/JSON, mode silent, cron/scheduler friendly
 
 ---
 
@@ -30,31 +42,42 @@ Cek ketersediaan username di ratusan platform sosial media global, Indonesia, da
 - **Mode wizard interaktif** (`--wizard`)
 - **Logging detail** (`--loglevel`)
 - **Dokumentasi CLI bilingual, FAQ, tips** (`--faq`, `--tips`)
+- **Auto-create config** (YAML/JSON)
+- **Export chart otomatis ke PNG** (headless)
+- **Extensible & automation ready**
 
 ---
 
-## 📦 Struktur Modular
+## 🏗️ Arsitektur Modular
 
 ```
 app/
 ├── uh.py                # Main CLI & entrypoint
 ├── platforms.py         # Daftar platform utama
 ├── proxy/
-│   └── proxy.py         # Manajemen proxy
+│   └── proxy.py         # Manajemen proxy (rotasi, validasi)
 ├── validation/
-│   └── validation.py    # Validasi username
+│   └── validation.py    # Validasi username (global & per platform)
 ├── plugins_mod/
-│   └── plugins.py       # Loader plugin
+│   └── plugins.py       # Loader plugin (folder & custom JSON)
 ├── exporter/
-│   └── exporter.py      # Export hasil (JSON, CSV, TXT)
+│   └── exporter.py      # Export hasil (JSON, CSV, TXT, stub Excel)
 ├── search/
-│   └── search.py        # Core search, filter, statistik, riwayat
+│   └── search.py        # Core search, filter, statistik, riwayat, output warna
 ├── plugins/
 │   └── contoh.py        # Contoh plugin platform
 ├── config.json          # Config default (auto-create)
 ├── history.jsonl        # Riwayat pencarian
 ├── hasil_chart.png      # Output chart jika headless
 ```
+
+**Penjelasan Modular:**
+- **proxy/**: Manajemen proxy, auto-rotate, validasi proxy pool
+- **validation/**: Validasi username (regex, per platform, custom rule)
+- **plugins_mod/**: Loader plugin platform (folder & custom JSON)
+- **exporter/**: Export hasil ke berbagai format (JSON, CSV, TXT, stub Excel)
+- **search/**: Core pencarian, filter, statistik, riwayat, output warna
+- **plugins/**: Contoh plugin platform custom
 
 ---
 
@@ -84,7 +107,6 @@ app/
    ```
 2. **Install semua dependencies utama dan opsional:**
    ```bash
-   # Install semua dependensi utama dan opsional sekaligus
    pip install -r requirements.txt
    # Untuk fitur chart: pip install matplotlib
    # Untuk config YAML: pip install pyyaml
@@ -94,13 +116,8 @@ app/
    # Untuk plugin/ekstensi: pip install requests colorama
    ```
    > **Tips:**
-   > - Jika ingin semua fitur lanjutan aktif, install juga: `pip install matplotlib pyyaml rich tqdm pandas openpyxl requests colorama`
-   > - Untuk environment terisolasi, gunakan [venv](https://docs.python.org/3/library/venv.html):
-   >   ```bash
-   >   python3 -m venv venv
-   >   source venv/bin/activate
-   >   pip install -r requirements.txt
-   >   ```
+   > - Untuk semua fitur lanjutan: `pip install matplotlib pyyaml rich tqdm pandas openpyxl requests colorama`
+   > - Untuk environment terisolasi: `python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt`
    > - Jika ada error dependency, update pip: `python3 -m pip install --upgrade pip`
 
 ---
@@ -134,19 +151,36 @@ python3 uh.py --chart
 
 ---
 
+## 🖥️ Contoh Output CLI
+
+```bash
+$ python3 uh.py johndoe --only-found
+[Instagram] Terdaftar
+  URL: https://instagram.com/johndoe
+  Username ditemukan di Instagram
+[Twitter] Tidak Terdaftar
+  URL: https://twitter.com/johndoe
+  Username tidak ditemukan di Twitter
+...dst
+```
+
+---
+
 ## 🧩 Modular Tools & Advanced Usage
 
 ### 1. **Proxy**
 - Atur file proxy: `--proxy-file proxy.txt`
 - Otomatis rotate proxy setiap request
+- Support proxy pool dari API (coming soon)
 
 ### 2. **Validation**
 - Validasi username otomatis & per platform
-- Bisa custom rule di `validation/validation.py`
+- Custom rule di `validation/validation.py`
 
 ### 3. **Plugins**
 - Tambah platform baru via folder `plugins/` atau file JSON custom
 - Contoh plugin: `app/plugins/contoh.py`
+- Plugin eksternal (pip installable, roadmap)
 
 ### 4. **Exporter**
 - Export hasil ke JSON, CSV, TXT
@@ -170,21 +204,47 @@ python3 uh.py --chart
 
 ---
 
-## 📝 Contoh Perintah Lain
+## 🤖 Integrasi Automation & Cron
 
-- Tampilkan riwayat pencarian:
+- Jalankan otomatis via cron/scheduler:
   ```bash
-  python3 uh.py --history
+  0 * * * * cd /path/to/UsernameHunter/app && python3 uh.py --username-file daftar.txt --output hasil.json --silent --logfile cron.log
   ```
-- Tampilkan statistik hasil:
-  ```bash
-  python3 uh.py --stats
-  ```
-- Tampilkan FAQ & tips:
-  ```bash
-  python3 uh.py --faq
-  python3 uh.py --tips
-  ```
+- Integrasi dengan notifikasi (Telegram/Discord/email): roadmap
+- Export otomatis ke Google Drive/Dropbox: roadmap
+
+---
+
+## 🛡️ Security & Privacy
+- Tidak menyimpan password/user credential
+- Semua request hanya GET ke public profile
+- Tidak mengirim data ke server eksternal (kecuali plugin custom)
+- History & log hanya lokal
+
+---
+
+## 🛠️ Troubleshooting
+- **matplotlib error:**
+  - Install: `pip install matplotlib`
+  - Jika warning headless, chart otomatis disimpan ke PNG
+- **pyyaml error:**
+  - Install: `pip install pyyaml`
+- **rich/tqdm error:**
+  - Install: `pip install rich tqdm`
+- **Permission error:**
+  - Jalankan dengan akses yang benar, atau gunakan virtualenv
+- **Proxy error:**
+  - Pastikan proxy valid dan tidak diblokir
+- **Export Excel error:**
+  - Install: `pip install pandas openpyxl`
+
+---
+
+## 📚 Dokumentasi & Referensi
+- [Wiki & FAQ](https://github.com/FerzDevZ/UsernameHunter/wiki)
+- [Contoh Plugin](app/plugins/contoh.py)
+- [CONTRIBUTING.md](CONTRIBUTING.md)
+- [CHANGELOG.md](CHANGELOG.md)
 
 ---
 
@@ -198,6 +258,10 @@ python3 uh.py --chart
   - Gunakan `--silent --logfile hasil.log`
 - **Bagaimana monitoring otomatis?**
   - Jalankan dengan cron/scheduler dan gunakan `--logfile`.
+- **Bagaimana menambah plugin eksternal?**
+  - Roadmap: plugin pip installable, cek [Wiki](https://github.com/FerzDevZ/UsernameHunter/wiki)
+- **Bagaimana troubleshooting error dependency?**
+  - Lihat bagian troubleshooting di atas
 
 ---
 
@@ -213,6 +277,7 @@ python3 uh.py --chart
 - Auto-update daftar platform dari repo/URL
 - Visualisasi chart lain (bar, dsb)
 - Unit test & CI/CD, installer (pip/docker/exe)
+- Dokumentasi API & REST (roadmap)
 
 ---
 
